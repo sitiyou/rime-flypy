@@ -1,4 +1,5 @@
 patch:
+  schema/name: 拼 · 小鹤音形
   switches/@0/reset: 1
   switches/@3/reset: 1
   switches/+:
