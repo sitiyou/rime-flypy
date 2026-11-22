@@ -1,3 +1,5 @@
+[本 fork 的生成、部署和个人词库说明](../README.md)
+
 # 小鹤音形 Rime 挂接 For Linux
 
 ![](https://img.shields.io/aur/version/rime-flypy)

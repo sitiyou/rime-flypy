@@ -11,3 +11,5 @@ build/
 /flypy.user.top.txt
 /flypy/flypy.user.dict.yaml
 /flypy/flypy.user.top.dict.yaml
+
+__pycache__/

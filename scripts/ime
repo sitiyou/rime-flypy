@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+"""Manage locally owned Rime entries for the generated profile."""
+import argparse
+import os
+import subprocess
+from pathlib import Path
+
+from personal import save_rules
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    commands = parser.add_subparsers(dest="command", required=True)
+    add = commands.add_parser("add")
+    for command in (add, commands.add_parser("top"), commands.add_parser("del")):
+        command.add_argument("word")
+        command.add_argument("code")
+    add.add_argument("-t", "--top", action="store_true")
+    add.add_argument("-d", "--delete", action="store_true")
+    commands.add_parser("apply")
+    commands.add_parser("toggle")
+    args = parser.parse_args()
+    if args.command == "apply":
+        subprocess.run(["make", "-C", Path(__file__).resolve().parents[1], "deploy"], check=True)
+        return
+    if args.command == "toggle":
+        if subprocess.run(["pgrep", "-x", "-u", str(os.getuid()), "fcitx5"],
+                          stdout=subprocess.DEVNULL).returncode == 0:
+            subprocess.run(["fcitx5-remote", "-e"], check=True)
+        else:
+            subprocess.run(["fcitx5", "-dr"], check=True)
+        return
+    if any(not text or any(c in text for c in "\r\n\t") for text in (args.word, args.code)):
+        parser.error("word and code must each be a single nonempty field")
+    directory = Path(os.getenv("XDG_CONFIG_HOME", Path.home() / ".config")) / "rime-flypy"
+    top = args.command == "top" or getattr(args, "top", False)
+    deleted = args.command == "del" or getattr(args, "delete", False)
+    section = "top" if top else ("delete" if deleted else "words")
+    entry = {"code": args.code, "text": args.word}
+    if top and deleted:
+        entry["comment"] = "[删]"
+    path = save_rules(directory, section, entry)
+    print(f"Saved to {path}. Run ime apply to activate.")
+
+
+if __name__ == "__main__":
+    main()

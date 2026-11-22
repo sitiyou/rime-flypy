@@ -1,0 +1,35 @@
+patch:
+  switches/@0/reset: 1
+  switches/@3/reset: 1
+  switches/+:
+    - {name: flypy_enable_2nd_short, reset: 1}
+    - {name: _flypy_hack_candidate, reset: 1}
+  menu/page_size: 9
+  style:
+    horizontal: false
+    candidate_list_layout: stacked
+  engine/processors/@before 0: lua_processor@*flypy_shortcut_processor
+  engine/translators/+:
+    - lua_translator@*flypy_shortcut_translator
+  engine/filters:
+    - lua_filter@*flypy_hint_filter
+    - lua_filter@*flypy_deletion_filter
+    - simplifier
+    - simplifier@simplification
+    - uniquifier
+  speller/alphabet: "abcdefghijklmnopqrstuvwxyz;'/"
+  speller/initials: "abcdefghijklmnopqrstuvwxyz"
+  speller/finals: "'/"
+  speller/auto_select_pattern: "^o[^u]$|^(?!ou(?:ei|jf)$)\\w{4}$"
+  history/input: oc
+  ok_mode/prefix: "ouok"
+  recognizer/patterns/ok_mode: "^ouok[a-z']*$"
+  key_binder/bindings:
+    - {when: has_menu, accept: minus, send: Page_Up}
+    - {when: has_menu, accept: equal, send: Page_Down}
+    - {when: has_menu, accept: Escape, send: 2}
+    - {when: always, accept: Escape, toggle: ascii_mode}
+    - {when: always, accept: Control+Alt+slash, toggle: simplification}
+    - {when: always, accept: Control+Alt+backslash, toggle: _flypy_hack_candidate}
+    - {when: composing, accept: Control+p, send: Up}
+    - {when: composing, accept: Control+n, send: Down}

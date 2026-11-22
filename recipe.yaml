@@ -9,3 +9,4 @@ install_files: >-
     *.dict.yaml
     flypy/*.dict.yaml
     lua/*.lua
+    lua/LICENSE.openfly
